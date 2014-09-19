@@ -2,7 +2,7 @@
 PaperBackPy
 
 The following python code transforms files into printable, machine readable images.
-It is, more or less, a clone of paperback - see http://ollydbg.de/Paperbak/
+It is, more or less, a clone of paperback, however the images produced are not comatible - see http://ollydbg.de/Paperbak/
 
 It depends on zbar - http://zbar.sourceforge.net/
 A windows installer is included. Or on debian derived linux, get it with "sudo apt-get install python-zbar"
