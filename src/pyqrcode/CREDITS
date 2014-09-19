@@ -1,0 +1,26 @@
+
+pyqrcode is a python extension for encoding and
+decoding the popular matrix code known as qrcode.
+
+pyqrcode and wouldn't be possible without the tireless
+of the people and open source projects below.
+
+ - libqrencode, by Fukuchi Kentaro
+ http://megaui.net/fukuchi/works/qrencode/index.en.html
+
+ - PyQrCodec, by Stefano Pedemonte
+ http://www.pedemonte.eu/pyqr/index.py/pyqrhome
+
+ - Java qrcode, by Yusuke Yanbe
+ http://qrcode.sourceforge.jp
+
+ - JCC, by Andi Vajda
+ http://pypi.python.org/pypi/JCC/
+
+ - Alexandre Fiori, 
+ pyqrcode project founder and maintainer
+
+ - Gleicon Moraes,
+ for giving directions, tips, and helping with jaca
+
+Thanks!

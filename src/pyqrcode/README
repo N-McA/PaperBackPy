@@ -1,0 +1,20 @@
+ 
+ README file for pyqrcode
+ ------------------------
+
+ pyqrcode is a python extension for encoding and decoding
+ the popular matrix code created by the Japanese
+ corporation Denso-Wave, known as qrcode.
+
+ The encoder is based on Fukuchi Kentaro's libqrencode,
+ with a small python hack from Stefano Pedemonte's
+ PyQrCodec.
+
+ On the other hand, the decoder is based on the best free
+ and open source qrcode decoder written by Yusuke Yanbe,
+ in java. It's built with Andi Vajda's JCC.
+
+ See CREDITS for details.
+ 
+ For everything else, go to pyqrcode website:
+ - http://pyqrcode.sourceforge.net
