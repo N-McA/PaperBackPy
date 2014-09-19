@@ -43,8 +43,8 @@ if __name__ == "__main__":
 	parser.add_argument("inputFile",help="The file to store on paper.")
 	parser.add_argument("-o","--outputFile",help="What to call the image. Default is Out.png",default="Out.png")
 	parser.add_argument("-r","--redundancy",help="The level of redundancy. Either L, M, Q or H. L = 7 percent, M = 15 percent, Q = 25, H = 30. M by default.",default="M")
-	parser.add_argument("-x","--width",help='Page width in inches. Default A4',default="8.276")
-	parser.add_argument("-y","--height",help='Page height in inches. Default A4',default="11.692")
+	parser.add_argument("-x","--width",help='Page width in px',default="-1")
+	parser.add_argument("-y","--height",help='Page height in px',default="-1")
 	parser.add_argument("-dpi",help='If included, this will tell you if your file will fit on the page.',default="-1")
 	parser.add_argument("-cores",help='The number of cores to use. Defaults to all of them.',default="-1")
 	
@@ -93,31 +93,44 @@ if __name__ == "__main__":
 
 	totalFileSizeInBytes = len(allFileBytes) + len(fileName) + 9 # bytes for number of chunks and fileName length
 	print "Processing", fileName, "at", totalFileSizeInBytes, "bytes." 
-
-	area = (totalFileSizeInBytes/chunkSize) * squareSize**2
-
-	fullX = int( math.floor(math.sqrt( aspect * area )) + 1)
-	fullY = int( math.floor(fullX/aspect) + 1)
-
-	nChunks = int(math.floor(totalFileSizeInBytes / chunkSize) + 1)
-
-	if fullX % squareSize != 0:
-		fullX = int((math.floor(fullX/squareSize) + 1) * squareSize)
-
-	fullY = int(math.floor(fullY/squareSize) * squareSize)
-	while fullX * fullY < nChunks*squareSize**2:
-		fullY += squareSize
-		
-	gridNX = fullX/squareSize
-	gridNY = fullY/squareSize
 	
-	if dpi != -1:
-		if fullX > width*dpi or fullY > height*dpi:
-			print "File too large for page at this size and resolution. Sorry."
-			sys.exit(1)
-		else:
-			print "File will fit on page."
+	nChunks = int(math.floor(totalFileSizeInBytes / chunkSize) + 1)
+	
+	if width == -1:
+		width = 8.267/2
+		height = 11.692/2
+		area = (totalFileSizeInBytes/chunkSize) * squareSize**2
+
+		fullX = int( math.floor(math.sqrt( aspect * area )) + 1)
+		fullY = int( math.floor(fullX/aspect) + 1)
+
+		if fullX % squareSize != 0:
+			fullX = int((math.floor(fullX/squareSize) + 1) * squareSize)
+
+		fullY = int(math.floor(fullY/squareSize) * squareSize)
+		while fullX * fullY < nChunks*squareSize**2:
+			fullY += squareSize
 			
+		gridNX = fullX/squareSize
+		gridNY = fullY/squareSize
+
+		if dpi != -1:
+			if fullX > width*dpi or fullY > height*dpi:
+				print "File too large for page at this size and resolution. Sorry."
+				sys.exit(1)
+			else:
+				print "File will fit on page."
+				
+	else:
+		gridNX = int((width/2)//squareSize)
+		gridNY = int((height/2)//squareSize)
+		fullX = gridNX * squareSize
+		fullY = gridNY * squareSize
+		
+	if gridNX * gridNY < nChunks:
+		print "Cannot fit file on page"
+		sys.exit(1)
+	
 	imgs = []
 
 	chunk = toChrs(0) + "START" + chr(len(fileName)) + fileName + toChrs(nChunks) + allFileBytes[0:(chunkSize-(9+len(fileName)))]
@@ -139,17 +152,19 @@ if __name__ == "__main__":
 		imgs[i] = Image.fromstring(imgs[i]['mode'], imgs[i]['size'], imgs[i]['pixels'])
 		
 	fullImg = Image.new( 'RGB', (fullX,fullY), "white") # create a new white image
-
 	z = 0
 	for i in range(gridNX):
 		for j in range(gridNY):
-			if z >= nChunks: break
-			fullImg.paste(imgs[z],(squareSize*i+extraBorder/2,squareSize*j+extraBorder/2))
+			fullImg.paste(imgs[z%nChunks],(squareSize*i+extraBorder/2,squareSize*j+extraBorder/2))
 			z += 1
 
 	fullImg = fullImg.resize((fullImg.size[0]*2,fullImg.size[1]*2))
+	
+	finalIm = Image.new('RGB',(int(width),int(height)),'white')
+	finalIm.paste(fullImg,(int((width-fullImg.size[0])/2.0),int((height-fullImg.size[1])/2.0)))
+	
 	w = open(outfile,'wb')
-	fullImg.save(w,'png')
+	finalIm.save(w,'png')
 	w.close()
 
 	print "Time taken:", time.time() - t, "seconds"

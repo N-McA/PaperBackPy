@@ -27,7 +27,7 @@ dataDic = {}
 
 corner = wholeIm
 if wholeIm.size[0] > 1000 and wholeIm.size[1] > 1000:
-	corner = wholeIm.crop((0,0,500,500))
+	corner = wholeIm.crop((0,0,600,600))
 
 scanner = zbar.ImageScanner()
 scanner.parse_config('enable')
